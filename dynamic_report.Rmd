@@ -1,0 +1,81 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+
+```
+
+## Lancer Player Tendencies, A Dynamic Survey?
+
+You need to change the contents of this Rmd! Replace the R code and markdown give below in this template document.
+
+```{r}
+library(tidyverse)
+logged_data <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIHAfKioNot3iXEV3E7V1xZjqAUBx7TySN78jfEkHGU0eMxbJpt8O83NG1rOTZ041XLAc1o4hdbRTJ/pub?gid=97536103&single=true&output=csv")
+
+latest_data <- logged_data %>% rename(years_played = 2,
+                                      experience_level = 3,
+                                      experience_type = 4,
+                                      play_frequency = 5,
+                                      campaign_activity = 6,
+                                      modules_played = 7,
+                                      other_massif = 8)
+
+participant_count <- length(latest_data$years_played)
+
+modules <- latest_data %>%separate_rows(modules_played, sep=", ")
+
+# removing the count for the Siren's Song subtitle
+modules <- modules[-which(modules$modules_played == "Mountain's Remorse"), ]
+
+module_count <- modules%>%
+  count(modules_played, name=NULL)
+
+module_count[,1] <- c("None", "Dustgrave", "NRFaWF", "OSR", "OWS", "SoTW", "SSMR")
+
+#null_index <- which(module_count$modules_played == NULL)
+
+#finding min + max, while making sure to return all minimums rather than just the first
+
+least_played_module <- module_count[which(module_count$n == min(module_count$n)), ]
+
+most_played_module <- module_count[which(module_count$n == max(module_count$n)), ]
+
+mean_modules_played <- sum(module_count$n)/participant_count
+
+print(mean_modules_played)
+
+# Drawing Bar Charts
+
+module_popularity <- ggplot(data=module_count) +
+  geom_col(aes(x=modules_played, y=n)) +
+  theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) +
+  labs(x="Module", y="Number of Players")
+
+
+playtime_averages <- data.frame(c("Beginner", "Intermediate", "Veteran"),
+                       c(mean((latest_data %>%subset(experience_level == "Beginner"))[,2]),
+                         mean((latest_data %>%subset(experience_level == "Intermediate Player"))[,2]),
+                         mean((latest_data %>%subset(experience_level == "Veteran"))[,2])))%>%
+  rename(Confidence = 1,
+         Playtime = 2)
+
+player_confindence_graph <- ggplot(data=playtime_averages) +
+  geom_col(aes(x=Confidence, y=Playtime)) +
+  labs(y="Mean Years Played", x="Self-Described Skill Level")
+
+module_popularity
+player_confindence_graph
+
+```
+
+The best pet to have is a `r best_pet` of course!
+
+![](https://c.tenor.com/-qBsG1HwR4oAAAAC/tenor.gif)
