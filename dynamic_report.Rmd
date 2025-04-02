@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
 
 ## Lancer Player Tendencies, A Dynamic Survey?
 
-You need to change the contents of this Rmd! Replace the R code and markdown give below in this template document.
+This is a survey on lancer player habits. You may contribute to this data via [this google form](https://docs.google.com/forms/d/e/1FAIpQLSefWVAi6SeDJrVK9jHcsnmIgLgwZaZH9CJuj8GzZwaVjmqE9g/viewform?usp=header) and the data will be updated shortly after to reflect your results.
 
 ```{r}
 library(tidyverse)
@@ -54,7 +54,7 @@ print(mean_modules_played)
 
 # Drawing Bar Charts
 
-module_popularity <- ggplot(data=module_count) +
+ggplot(data=module_count) +
   geom_col(aes(x=modules_played, y=n)) +
   theme(axis.text.x=element_text(angle=90,hjust=1,vjust=0.5)) +
   labs(x="Module", y="Number of Players")
@@ -66,16 +66,8 @@ playtime_averages <- data.frame(c("Beginner", "Intermediate", "Veteran"),
                          mean((latest_data %>%subset(experience_level == "Veteran"))[,2])))%>%
   rename(Confidence = 1,
          Playtime = 2)
-
-player_confindence_graph <- ggplot(data=playtime_averages) +
+ggplot(data=playtime_averages) +
   geom_col(aes(x=Confidence, y=Playtime)) +
   labs(y="Mean Years Played", x="Self-Described Skill Level")
 
-module_popularity
-player_confindence_graph
-
 ```
-
-The best pet to have is a `r best_pet` of course!
-
-![](https://c.tenor.com/-qBsG1HwR4oAAAAC/tenor.gif)
