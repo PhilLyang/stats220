@@ -3,21 +3,20 @@ title: My dynamic report
 output: html_fragment
 ---
 
-```{r setup, include=FALSE}
+{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
 
-```
 
-```{css}
+{css}
 
-```
 
-## Lancer Player Tendencies, A Dynamic Survey?
+Lancer Player Tendencies, A Dynamic Survey?
 
-This is a survey on lancer player habits. You may contribute to this data via [this google form](https://docs.google.com/forms/d/e/1FAIpQLSefWVAi6SeDJrVK9jHcsnmIgLgwZaZH9CJuj8GzZwaVjmqE9g/viewform?usp=header) and the data will be updated shortly after to reflect your results.
+This is a survey on lancer player habits. You may contribute to this data via this google form and the data will be updated shortly after to reflect your results.
 
-```{r}
+{r}
 library(tidyverse)
+library(magick)
 logged_data <- read.csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vTIHAfKioNot3iXEV3E7V1xZjqAUBx7TySN78jfEkHGU0eMxbJpt8O83NG1rOTZ041XLAc1o4hdbRTJ/pub?gid=97536103&single=true&output=csv")
 
 latest_data <- logged_data %>% rename(years_played = 2,
@@ -50,7 +49,15 @@ most_played_module <- module_count[which(module_count$n == max(module_count$n)),
 
 mean_modules_played <- sum(module_count$n)/participant_count
 
-print(mean_modules_played)
+# Info Bar
+image_blank(color="white", width=400, height=30)%>%
+  image_annotate(text="Participation Count:", size =20, gravity="center")
+image_blank(color="white", width=400, height=30)%>%
+  image_annotate(text=participant_count, size =20, gravity="center")
+image_blank(color="white", width=400, height=30)%>%
+  image_annotate(text="Mean Playtime (years):", size =20, gravity="center")
+image_blank(color="white", width=400, height=30)%>%
+  image_annotate(text=mean(round(mean(latest_data$years_played)), digits = 2), size =20, gravity="center")
 
 # Drawing Bar Charts
 
@@ -61,13 +68,14 @@ ggplot(data=module_count) +
 
 
 playtime_averages <- data.frame(c("Beginner", "Intermediate", "Veteran"),
-                       c(mean((latest_data %>%subset(experience_level == "Beginner"))[,2]),
-                         mean((latest_data %>%subset(experience_level == "Intermediate Player"))[,2]),
-                         mean((latest_data %>%subset(experience_level == "Veteran"))[,2])))%>%
+                                c(mean((latest_data %>%subset(experience_level == "Beginner"))[,2]),
+                                  mean((latest_data %>%subset(experience_level == "Intermediate Player"))[,2]),
+                                  mean((latest_data %>%subset(experience_level == "Veteran"))[,2])))%>%
   rename(Confidence = 1,
          Playtime = 2)
 ggplot(data=playtime_averages) +
   geom_col(aes(x=Confidence, y=Playtime)) +
   labs(y="Mean Years Played", x="Self-Described Skill Level")
 
-```
+
+
