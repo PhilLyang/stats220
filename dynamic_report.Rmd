@@ -52,14 +52,19 @@ most_played_module <- module_count[which(module_count$n == max(module_count$n)),
 mean_modules_played <- sum(module_count$n)/participant_count
 
 # Info Bar
-image_blank(color="white", width=400, height=30)%>%
-  image_annotate(text="Participation Count:", size =20, gravity="center")
-image_blank(color="white", width=400, height=30)%>%
-  image_annotate(text=participant_count, size =20, gravity="center")
-image_blank(color="white", width=400, height=30)%>%
-  image_annotate(text="Mean Playtime (years):", size =20, gravity="center")
-image_blank(color="white", width=400, height=30)%>%
-  image_annotate(text=mean(round(mean(latest_data$years_played)), digits = 2), size =20, gravity="center")
+a <- image_append(c(image_blank(color="white", width=400, height=30)%>%
+                      image_annotate(text="Participation Count:", size =20, gravity="center"),
+                    image_blank(color="white", width=400, height=30)%>%
+                      image_annotate(text=participant_count, size =20, gravity="center")))
+
+b <- image_append(c(image_blank(color="white", width=400, height=30)%>%
+                      image_annotate(text="Mean Playtime (years):", size =20, gravity="center"),
+                    image_blank(color="white", width=400, height=30)%>%
+                      image_annotate(text=round(mean(latest_data$years_played), digits=2),
+                  size =20, gravity="center")))
+
+
+image_append(c(a, b), stack=TRUE)
 
 # Drawing Bar Charts
 
